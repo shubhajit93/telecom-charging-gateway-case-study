@@ -39,13 +39,13 @@ TPS limits are configured **per application per time slot** and checked before r
 
 Internal clients like the renewal engine talk to the CGW over **persistent TCP connections**, using a compact delimited request and a short space-separated response (session ID, result code, and so on).
 
-- **Why:** renewals run in bulk. Reusing long-lived connections and keeping parsing trivial kept per-request overhead low. External partners go through the webservices instead.
+- **Why:** renewals run in bulk, and the gateway handled about 500 TPS at peak. Reusing long-lived connections and keeping parsing trivial kept per-request overhead low. External partners go through the webservices instead.
 
 ## 7. Renewal fairness and pacing
 
 - **Several picker threads** each fill their own queue from the database in bounded batches. A **round-robin global queue** hands work to requester threads.
 - Each requester has a **per-second TPS cap**, and requesters run only inside **allowed time windows**.
-- **Why:** renewal volume spikes at known times, such as the start of a billing cycle. Pacing keeps the charging rate inside the operator's limits. Round-robin over several queues stops one slow slice of the subscriber base from blocking the rest.
+- **Why:** at about 200,000 renewals a day, volume spikes at known times, such as the start of a billing cycle. Pacing keeps the charging rate inside the operator's limits. Round-robin over several queues stops one slow slice of the subscriber base from blocking the rest.
 
 ## 8. Renewal as an explicit state machine
 

@@ -1,6 +1,6 @@
 # Carrier Billing & Subscription Renewal Platform: Architecture Case Study
 
-> **What this is:** a write-up of the **charging gateway (CGW)**, **subscription renewal engine**, and **payment webservices** I built and ran in production for mobile operators in **Bangladesh and Malaysia** (2019–2023, at SSD-TECH and Dotlines Bangladesh, which belong to the same group). Content providers use the platform to charge subscribers' mobile balance for digital services, one-off or on subscription.
+> **What this is:** a write-up of the **charging gateway (CGW)**, **subscription renewal engine**, and **payment webservices** I built and ran in production for mobile operators in **Bangladesh and Malaysia** (2019–2023, at SSD-TECH and Dotlines Bangladesh, which belong to the same group). Content providers use the platform to charge subscribers' mobile balance for digital services, one-off or on subscription. At its peak it handled **~500 TPS** of charging traffic and **~200,000 renewals a day** for **~30 services**.
 > **What this is not:** source code. The code is proprietary, so this repository only documents the architecture, the decisions behind it, and my part in it. Hosts, credentials, operator and provider names, and subscriber data have been left out.
 
 **Stack:** Java 8 · Gradle · TCP sockets · MySQL (HikariCP) · Redis · Log4j2 · SNMP · PHP webservices · SOAP / HTTP · UCIP/AIR (operator IN)
@@ -165,8 +165,15 @@ stateDiagram-v2
 
 ## 8. Results
 
+| Metric | Approximate figure |
+|---|---|
+| Charging gateway throughput | **~500 TPS** |
+| Subscription renewals | **~200,000 per day** |
+| Services billed through one API | **~30** |
+| Markets | **2 countries** (Bangladesh, Malaysia) |
+
 - **Production carrier billing** for operators in **two countries**, behind one charging API
-- **Automated subscription renewals** with grace periods, retries, downgrade fallback, and reminders, at controlled throughput
+- **~200K automated renewals a day**, with grace periods, retries, downgrade fallback, and reminders, paced to stay within operator limits
 - **Pluggable billing back ends**, so adding an operator or payment provider meant adding a node, not changing the core
 - Spending limits with capture and revert, plus per-application TPS limits, to protect both subscribers and operator systems
 
